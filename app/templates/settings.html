@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}PFS - Settings{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h2 class="mb-0">Settings</h2>
+                </div>
+                <div class="card-body">
+                    <form id="settingsForm">
+                        <div class="mb-4">
+                            <label for="basePath" class="form-label fw-bold">Base Path</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="bi bi-folder"></i></span>
+                                <input type="text" class="form-control" id="base_path" name="base_path" aria-describedby="basePathHelp" value="{{ settings.base_path }}">
+                            </div>
+                            <div id="basePathHelp" class="form-text text-muted mt-2">
+                                <i class="bi bi-info-square"></i> The base path for where print files are saved.
+                            </div>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-floppy"></i> Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}  <!-- This includes any scripts from the base template -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('settingsForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const data = Object.fromEntries(formData.entries());
+
+                fetch('/settings/update', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Settings saved successfully!');
+                    } else {
+                        alert('Error saving settings: ' + data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('An error occurred while saving settings.');
+                });
+            });
+        });
+    </script>
+{% endblock %}

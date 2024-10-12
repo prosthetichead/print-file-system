@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}PFS - Main{% endblock %}
+
+{% block content %}
+    <!-- Add your main content here -->
+    <h1>Welcome to PFS</h1>
+    <!-- More content... -->
+{% endblock %}
+
+
+{% block scripts %}
+    {{ super() }}  <!-- This includes any scripts from the base template -->
+    <script>
+        // Your unique JavaScript for the main page
+        console.log("This is the main page script");
+    </script>
+{% endblock %}
