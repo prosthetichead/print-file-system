@@ -4,18 +4,19 @@
 
 {% block content %}
 <h1>Add New Print</h1>
+
 <form action="{{ url_for('main.new_print') }}" method="POST" enctype="multipart/form-data">
     <div class="mb-3">
-        <label for="name" class="form-label">Print Name</label>
-        <input type="text" class="form-control" id="name" name="name" required>
+        <label for="name" class="form-label" >Print Name</label>
+        <input type="text" class="form-control" id="name" name="name" value="{{ form_data.name if form_data else '' }}" required>
     </div>
     <div class="mb-3">
         <label for="description" class="form-label">Description</label>
-        <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+        <textarea class="form-control" id="description" name="description" rows="3">{{ form_data.description if form_data else '' }}</textarea>
     </div>
     <div class="mb-3">
         <label for="tags" class="form-label">Tags (comma-separated)</label>
-        <input type="text" class="form-control" id="tags" name="tags">
+        <input type="text" class="form-control" id="tags" name="tags" value="{{ form_data.tags if form_data else '' }}">
     </div>
     <div class="mb-3">
         <label for="files" class="form-label">Print Files</label>
@@ -27,32 +28,4 @@
 
 {% block scripts %}
     {{ super() }}
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const form = document.querySelector('form');
-            form.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(form);
-                
-                fetch('{{ url_for("main.new_print") }}', {
-                    method: 'POST',
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Print added successfully!');
-                        window.location.href = '{{ url_for("main.home") }}';
-                    } else {
-                        alert('Error adding print: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred while adding the print.');
-                });
-            });
-        });
-    </script>
 {% endblock %}

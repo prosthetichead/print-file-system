@@ -25,7 +25,18 @@
                     <button class="btn btn-outline-success" type="submit">Search</button>
                 </form>
             </div>
-          </nav>
+        </nav>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
     </header>
     
     <main class="flex-grow-1">
@@ -42,7 +53,7 @@
     </footer>
 
     {% block scripts %}
-    <!-- Common scripts can go here -->
+    <script src="{{url_for('static', filename='js/bootstrap/bootstrap.bundle.min.js')}}"></script>
     {% endblock %}
 </body>
 </html>
