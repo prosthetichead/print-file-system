@@ -15,5 +15,3 @@ class Print(db.Model):
 
     tags = db.relationship('Tag', secondary=print_tags, backref=db.backref('prints', lazy='dynamic'))
     files = db.relationship('PrintFile', back_populates='print_record', lazy='dynamic')
-
-
