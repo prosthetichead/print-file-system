@@ -15,3 +15,19 @@ class Print(db.Model):
 
     tags = db.relationship('Tag', secondary=print_tags, backref=db.backref('prints', lazy='dynamic'))
     files = db.relationship('PrintFile', back_populates='print_record', lazy='dynamic')
+
+    def __repr__(self):
+        return f"<Print {self.name}>"
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.name,
+            'description': self.description,
+            'created_at': self.created_at.isoformat(),
+            'modified_at': self.modified_at.isoformat(),
+            'tags': [tag.name for tag in self.tags],
+            'files': [file.to_dict() for file in self.files]
+        }
+
+    

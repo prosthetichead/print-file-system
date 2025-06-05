@@ -14,5 +14,20 @@ class PrintFile(db.Model):
 
     print_record = db.relationship('Print', back_populates='files')
 
+    def __repr__(self):
+        return f"<PrintFile {self.name}>"
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'print_id': self.print_id,
+            'name': self.name,
+            'size': self.size,
+            'file_name': self.file_name,
+            'file_path': self.file_path,
+            'file_type': self.file_type,
+            'created_at': self.created_at.isoformat(),
+            'modified_at': self.modified_at.isoformat()
+        }
 
 
