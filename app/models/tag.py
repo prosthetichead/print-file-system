@@ -15,4 +15,4 @@ class Tag(db.Model):
         return re.sub(r'[^a-z0-9-]', '', name.lower().replace(' ', '-'))
 
     def __repr__(self):
-        return f'<Tag {self.name}>'
+        return f'<Tag {self.name}>' 
