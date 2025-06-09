@@ -30,32 +30,32 @@ class PrintService:
         else:
             stmt = stmt.order_by(Print.name.desc())
 
-        stmt = stmt.limit(per_page).offset((page - 1) * per_page)  
-        
+        # Create a count query using the same filters (but before ordering and pagination)
+        count_stmt = db.select(db.func.count()).select_from(stmt.subquery())
+        total_prints = db.session.scalar(count_stmt)
+
+        stmt = stmt.limit(per_page).offset((page - 1) * per_page)
 
         # Execute the query
         print(stmt.compile(compile_kwargs={"literal_binds": True}))
         result = db.session.execute(stmt)
         prints = result.scalars().all()
-        total_prints = db.session.query(db.func.count(Print.id)).scalar()
+        
         total_pages = (total_prints + per_page - 1) // per_page
 
-        if(prints):
-            return {'prints': [print_obj.to_dict() for print_obj in prints],
-                    'page': page,
-                    'per_page': per_page,
-                    'total_prints': total_prints,
-                    'total_pages': total_pages,
-                    'next_page': page + 1 if page < total_pages else None,
-                    'prev_page': page - 1 if page > 1 else None
-                    }
-        else:
-            return None
+        return {'prints': [print_obj.to_dict() for print_obj in prints],
+                'page': page,
+                'per_page': per_page,
+                'total_prints': total_prints,
+                'total_pages': total_pages,
+                'next_page': page + 1 if page < total_pages else None,
+                'prev_page': page - 1 if page > 1 else None
+                }
 
     @staticmethod
-    def create_new_print(name, description, tags, files):
+    def create_new_print(name, creator, description, tags, files):
         try:
-            new_print = Print(name=name, description=description)
+            new_print = Print(name=name, creator=creator, description=description)
             
             for tag_name in tags:
                 tag = Tag.query.filter_by(name=tag_name.strip()).first()
@@ -77,11 +77,13 @@ class PrintService:
             return False, str(e)
 
     @staticmethod
-    def save_print_file(print_obj, file, commit=True):
+    def save_print_file(print_obj:Print, file, commit=True):
         try:
             filename = file.filename
-            base_path = SettingsManager.get_setting('base_path')
-            dir_path = os.path.join(base_path, f'{print_obj.name}')
+            base_path = SettingsManager.get_setting('base_path')            
+            print_dir_naming_pattern = SettingsManager.get_setting('print_dir_naming_pattern')           
+            dir_name = print_obj.dir_name(print_dir_naming_pattern)
+            dir_path = os.path.join(base_path, dir_name )
             file_path = os.path.join(dir_path, filename)
             if not os.path.exists(dir_path):
                 os.makedirs(dir_path)
@@ -92,7 +94,7 @@ class PrintService:
             new_file = PrintFile(
                 print_id=print_obj.id,
                 name=filename,
-                size=file_size,
+                file_size=file_size,
                 file_name=filename,
                 file_path=file_path,
                 file_type=file_type
@@ -105,6 +107,7 @@ class PrintService:
 
         except Exception as e:
             db.session.rollback()
+            print(e)
             return False, str(e)        
         return True, "File saved successfully"
         

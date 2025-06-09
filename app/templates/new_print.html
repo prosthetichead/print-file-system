@@ -11,6 +11,10 @@
         <input type="text" class="form-control" id="name" name="name" value="{{ form_data.name if form_data else '' }}" required>
     </div>
     <div class="mb-3">
+        <label for="name" class="form-label" >Creator</label>
+        <input type="text" class="form-control" id="creator" name="creator" value="{{ form_data.creator if form_data else '' }}" required>
+    </div>    
+    <div class="mb-3">
         <label for="description" class="form-label">Description</label>
         <textarea class="form-control" id="description" name="description" rows="3">{{ form_data.description if form_data else '' }}</textarea>
     </div>

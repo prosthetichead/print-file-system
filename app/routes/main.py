@@ -20,11 +20,12 @@ def new_print():
     form_data = {}
     if request.method == 'POST':
         name = request.form['name']
+        creator = request.form['creator']
         description = request.form['description']
         tags = request.form['tags'].split(',')
         files = request.files.getlist('files')
 
-        success, message = PrintService.create_new_print(name, description, tags, files)        
+        success, message = PrintService.create_new_print(name, creator, description, tags, files)        
         success = False
         if success:
             flash('Print added successfully!', 'success')
@@ -38,6 +39,7 @@ def new_print():
             }
     
     return render_template('new_print.html', form_data=form_data)
+
 
 @main_blueprint.route('/api/prints', methods=['GET'])
 def api_get_prints():
@@ -64,7 +66,7 @@ def api_get_prints():
     if prints:
         return jsonify(prints)
     else:
-        return jsonify({'error': 'No prints found'}), 404
+        return jsonify({'error': 'An error occurred while fetching prints'}), 500
     
 
 # API Endpoints

@@ -1,4 +1,4 @@
-from app.extensions import db
+from app.extensions import db, url_safe_value
 import re
 
 class Tag(db.Model):
@@ -7,12 +7,7 @@ class Tag(db.Model):
 
     def __init__(self, name):
         self.name = name
-        self.id = self.generate_id(name)
-
-    @staticmethod
-    def generate_id(name):
-        # Convert to lowercase, replace spaces with hyphens, remove non-alphanumeric characters
-        return re.sub(r'[^a-z0-9-]', '', name.lower().replace(' ', '-'))
+        self.id = self.url_safe_value(name)
 
     def __repr__(self):
         return f'<Tag {self.name}>' 

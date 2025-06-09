@@ -43,7 +43,8 @@ class SettingsManager:
     @staticmethod
     def set_defualt_settings():
         default_settings = {
-            "base_path": os.path.join(current_app.instance_path, 'model_files'),            
+            "base_path": os.path.join(current_app.instance_path, 'model_files'), 
+            "print_dir_naming_pattern" : "{creator}/{name}#{id}"         
         }
         for name, value in default_settings.items():
             SettingsManager.set_setting(name, value)
